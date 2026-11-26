@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,15 +31,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 @Composable
 fun Pantalla6RegistrarAlumno(
+    onGuardarAlumno: suspend (AlumnoLocal) -> Unit = {},
     onAbrirMenu: () -> Unit = {},
     onRegresar: () -> Unit = {},
     onRegistrarClick: () -> Unit = {}
 ) {
     val fondo = Color(0xFFF5F8FB)
     val azulOscuro = Color(0xFF15395B)
+    val scope = rememberCoroutineScope()
 
     var matricula by remember { mutableStateOf("") }
     var nombres by remember { mutableStateOf("") }
@@ -118,20 +122,22 @@ fun Pantalla6RegistrarAlumno(
         Spacer(modifier = Modifier.height(20.dp))
         Button(
             onClick = {
-                if (nombres.isNotBlank() || matricula.isNotBlank()) {
-                    BaseDatosLocal.alumnos.add(
-                        AlumnoLocal(
-                            matricula = matricula.trim(),
-                            nombres = nombres.trim(),
-                            apellidoMaterno = apellidoMaterno.trim(),
-                            apellidoPaterno = apellidoPaterno.trim(),
-                            fechaNacimiento = "${dd.trim()}/${mm.trim()}/${yyyy.trim()}",
-                            correoTutor = correoTutor.trim(),
-                            grado = grado.trim()
+                scope.launch {
+                    if (nombres.isNotBlank() || matricula.isNotBlank()) {
+                        onGuardarAlumno(
+                            AlumnoLocal(
+                                matricula = matricula.trim(),
+                                nombres = nombres.trim(),
+                                apellidoMaterno = apellidoMaterno.trim(),
+                                apellidoPaterno = apellidoPaterno.trim(),
+                                fechaNacimiento = "${dd.trim()}/${mm.trim()}/${yyyy.trim()}",
+                                correoTutor = correoTutor.trim(),
+                                grado = grado.trim()
+                            )
                         )
-                    )
+                    }
+                    onRegistrarClick()
                 }
-                onRegistrarClick()
             },
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = azulOscuro),

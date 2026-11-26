@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,15 +32,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 @Composable
 fun Pantalla4RegistrarProfesor(
+    onGuardarProfesor: suspend (ProfesorLocal) -> Unit = {},
     onAbrirMenu: () -> Unit = {},
     onRegresar: () -> Unit = {},
     onRegistrarClick: () -> Unit = {}
 ) {
     val fondo = Color(0xFFF5F8FB)
     val azulOscuro = Color(0xFF15395B)
+    val scope = rememberCoroutineScope()
 
     var nombres by remember { mutableStateOf("") }
     var apellidoMaterno by remember { mutableStateOf("") }
@@ -97,20 +101,22 @@ fun Pantalla4RegistrarProfesor(
         Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = {
-                if (nombres.isNotBlank() || numeroEmpleado.isNotBlank()) {
-                    BaseDatosLocal.profesores.add(
-                        ProfesorLocal(
-                            nombres = nombres.trim(),
-                            apellidoMaterno = apellidoMaterno.trim(),
-                            apellidoPaterno = apellidoPaterno.trim(),
-                            correo = correo.trim(),
-                            telefono = telefono.trim(),
-                            numeroEmpleado = numeroEmpleado.trim(),
-                            materias = materias.trim()
+                scope.launch {
+                    if (nombres.isNotBlank() || numeroEmpleado.isNotBlank()) {
+                        onGuardarProfesor(
+                            ProfesorLocal(
+                                nombres = nombres.trim(),
+                                apellidoMaterno = apellidoMaterno.trim(),
+                                apellidoPaterno = apellidoPaterno.trim(),
+                                correo = correo.trim(),
+                                telefono = telefono.trim(),
+                                numeroEmpleado = numeroEmpleado.trim(),
+                                materias = materias.trim()
+                            )
                         )
-                    )
+                    }
+                    onRegistrarClick()
                 }
-                onRegistrarClick()
             },
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = azulOscuro),
