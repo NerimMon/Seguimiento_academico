@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,15 +35,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 
 @Composable
 fun Pantalla6RegistrarGrupo(
+    onGuardarGrupo: suspend (GrupoLocal) -> Unit = {},
     onAbrirMenu: () -> Unit = {},
     onRegresar: () -> Unit = {},
     onRegistrarClick: () -> Unit = {}
 ) {
     val fondo = Color(0xFFF5F8FB)
     val azulOscuro = Color(0xFF15395B)
+    val scope = rememberCoroutineScope()
 
     var grupo by remember { mutableStateOf("") }
     val listaProfesores = remember { mutableStateListOf("") }
@@ -131,15 +135,17 @@ fun Pantalla6RegistrarGrupo(
         Button(
             onClick = {
                 val profesLimpios = listaProfesores.map { it.trim() }.filter { it.isNotEmpty() }
-                if (grupo.isNotBlank()) {
-                    BaseDatosLocal.grupos.add(
-                        GrupoLocal(
-                            grupo = grupo.trim(),
-                            profesores = profesLimpios
+                scope.launch {
+                    if (grupo.isNotBlank()) {
+                        onGuardarGrupo(
+                            GrupoLocal(
+                                grupo = grupo.trim(),
+                                profesores = profesLimpios
+                            )
                         )
-                    )
+                    }
+                    onRegistrarClick()
                 }
-                onRegistrarClick()
             },
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = azulOscuro),

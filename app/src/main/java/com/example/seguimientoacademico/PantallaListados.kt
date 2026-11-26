@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun PantallaListadoAlumnos(
+    alumnos: List<AlumnoLocal> = emptyList(),
     onAbrirMenu: () -> Unit = {},
     onRegresar: () -> Unit = {}
 ) {
@@ -57,7 +58,7 @@ fun PantallaListadoAlumnos(
             onRegresarConfirmado = onRegresar
         )
 
-        if (BaseDatosLocal.alumnos.isEmpty()) {
+        if (alumnos.isEmpty()) {
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "No hay alumnos almacenados",
@@ -65,7 +66,7 @@ fun PantallaListadoAlumnos(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         } else {
-            BaseDatosLocal.alumnos.forEach { alumno ->
+            alumnos.forEach { alumno ->
                 Spacer(modifier = Modifier.height(12.dp))
                 Card(
                     shape = RoundedCornerShape(14.dp),
@@ -109,6 +110,7 @@ fun PantallaListadoAlumnos(
 
 @Composable
 fun PantallaListadoProfesores(
+    profesores: List<ProfesorLocal> = emptyList(),
     onAbrirMenu: () -> Unit = {},
     onRegresar: () -> Unit = {}
 ) {
@@ -143,7 +145,7 @@ fun PantallaListadoProfesores(
             onRegresarConfirmado = onRegresar
         )
 
-        if (BaseDatosLocal.profesores.isEmpty()) {
+        if (profesores.isEmpty()) {
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "No hay profesores almacenados",
@@ -151,7 +153,7 @@ fun PantallaListadoProfesores(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         } else {
-            BaseDatosLocal.profesores.forEach { profesor ->
+            profesores.forEach { profesor ->
                 Spacer(modifier = Modifier.height(12.dp))
                 Card(
                     shape = RoundedCornerShape(14.dp),
@@ -195,6 +197,7 @@ fun PantallaListadoProfesores(
 
 @Composable
 fun PantallaListadoGrupos(
+    grupos: List<GrupoLocal> = emptyList(),
     onAbrirMenu: () -> Unit = {},
     onRegresar: () -> Unit = {}
 ) {
@@ -229,7 +232,7 @@ fun PantallaListadoGrupos(
             onRegresarConfirmado = onRegresar
         )
 
-        if (BaseDatosLocal.grupos.isEmpty()) {
+        if (grupos.isEmpty()) {
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "No hay grupos almacenados",
@@ -237,7 +240,7 @@ fun PantallaListadoGrupos(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         } else {
-            BaseDatosLocal.grupos.forEach { itemGrupo ->
+            grupos.forEach { itemGrupo ->
                 Spacer(modifier = Modifier.height(12.dp))
                 Card(
                     shape = RoundedCornerShape(14.dp),
